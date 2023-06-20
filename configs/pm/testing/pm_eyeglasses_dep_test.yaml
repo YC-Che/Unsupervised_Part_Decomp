@@ -1,0 +1,57 @@
+
+method: CaDeX-ATC
+gpu: 1
+modes: ["test"]
+
+model:
+  model_name: cadex_pm
+
+dataset:
+  pin_mem: False
+  dataset_name: partMobility
+  data_root: ./resource/data/partMobility/base_data/test/eyeglasses
+  dataset_proportion: [1.0]
+  num_workers: 2
+  input_type: "dep"
+
+  rotate_augmentation: True
+  translate_augmentation: False
+  scale_augmentation: False
+  input_num: 1
+  num_atc: 2
+
+  num_input_pts: 1024
+  input_noise: 0.0
+  theta_range: [[-90, 0], [-90, 0]]
+
+training:
+  optim:
+    all:
+      lr: 0.0001
+      decay_schedule: 200
+      decay_factor: 0.5
+      lr_min: 0.00000001
+  loss_axis: false
+  refinement_point_n: 100
+  dcd_alpha: 50
+  dcd_threshold: 1
+  total_epoch: 1
+  batch_size: 48
+  initialize_network_file: ["/nhome/yuchen_che/log_backup/weight/xz_rotation_pose/eyeglasses_dep.pt"]
+  initialize_network_name: ["all"]
+
+evaluation:
+  eval_every_epoch: 1
+  batch_size: 1
+
+logging:
+  log_dir: pm_test/eyeglasses_dep
+  loggers: ["image", "hist", "video", "xls"]
+  viz_training_batch_interval: 10 # 20
+  viz_nontrain_batch_interval: 10
+  viz_epoch_interval: 1
+  checkpoint_epoch: 1 #20
+  mesh_viz_interval: 1
+
+  model_select_metric: segmentation
+  model_select_larger: true

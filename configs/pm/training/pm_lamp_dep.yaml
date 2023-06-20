@@ -1,0 +1,58 @@
+
+method: CaDeX-ATC-lamp-dep
+gpu: 5
+modes: ["train", "val"]
+
+model:
+  model_name: cadex_pm
+
+dataset:
+  pin_mem: False
+  dataset_name: partMobility
+  data_root: ./resource/data/partMobility/base_data/train/lamp
+  dataset_proportion: [1.0, 1.0]
+  num_workers: 10
+  input_type: "dep"
+
+  rotate_augmentation: False
+  translate_augmentation: True
+  scale_augmentation: True
+  input_num: 4
+  num_atc: 1
+
+  num_input_pts: 1024
+  input_noise: 0.002
+  theta_range: [[-180, 180]]
+
+training:
+  grad_clip: -1
+  loss_clip: -1
+  optim:
+    all:
+      lr: 0.001
+      decay_schedule: [150, 200, 250, 300]
+      decay_factor: [0.5, 0.5, 0.5, 0.5]
+      lr_min: 0.00000001
+  loss_axis: False
+  refinement_point_n: 200
+  dcd_alpha: 50
+  dcd_threshold: 1
+  total_epoch: 501
+  batch_size: 6
+  ablation: True
+  
+evaluation:
+  eval_every_epoch: 50
+  batch_size: 4
+
+logging:
+  log_dir: cadex_pm_lamp_dep_align
+  loggers: ["image", "hist", "video", "xls"]
+  viz_training_batch_interval: 20
+  viz_nontrain_batch_interval: 20
+  viz_epoch_interval: 50
+  checkpoint_epoch: 50
+  mesh_viz_interval: 1
+
+  model_select_metric: segmentation
+  model_select_larger: true

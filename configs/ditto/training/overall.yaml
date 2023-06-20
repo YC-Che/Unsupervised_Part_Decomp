@@ -1,0 +1,58 @@
+
+method: CaDeX-ATC-ditto
+gpu: 4,5
+modes: ["train", "val"]
+
+model:
+  model_name: cadex_pm
+  loss_axis: false
+
+dataset:
+  pin_mem: False
+  dataset_name: ditto
+  data_root: ./resource/data/ditto/train
+  dataset_proportion: [1.0, 1.0]
+  num_workers: 16
+  input_type: "dep"
+
+  rotate_augmentation: True
+  translate_augmentation: True
+  scale_augmentation: True
+  input_num: 2
+  num_atc: 1
+
+  num_input_pts: 2048
+  input_noise: 0.003
+  theta_range: [[-180, 0]]
+
+training:
+  grad_clip: -1
+  loss_clip: -1
+  optim:
+    all:
+      lr: 0.001
+      decay_schedule: [100, 150, 200, 250]
+      decay_factor: [0.5, 0.5, 0.5, 0.5]
+      lr_min: 0.00000001
+  loss_axis: false
+  refinement_point_n: 200
+  dcd_alpha: 50
+  dcd_threshold: 1
+  total_epoch: 501
+  batch_size: 32
+
+evaluation:
+  eval_every_epoch: 50
+  batch_size: 4
+
+logging:
+  log_dir: cadex_ditto_overall_dep
+  loggers: ["image", "hist", "video", "xls"]
+  viz_training_batch_interval: 50
+  viz_nontrain_batch_interval: 100
+  viz_epoch_interval: 50
+  checkpoint_epoch: 50
+  mesh_viz_interval: 50
+
+  model_select_metric: segmentation
+  model_select_larger: true

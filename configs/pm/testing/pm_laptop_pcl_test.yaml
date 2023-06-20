@@ -1,0 +1,58 @@
+
+method: CaDeX-ATC
+gpu: 1
+modes: ["test"]
+
+model:
+  model_name: cadex_pm
+
+dataset:
+  pin_mem: False
+  dataset_name: partMobility
+  data_root: ./resource/data/partMobility/base_data/test/laptop&notebook
+  dataset_proportion: [1.0]
+  num_workers: 2
+  input_type: "pcl"
+  rotate_augmentation: False
+  translate_augmentation: False
+  scale_augmentation: False
+
+  input_num: 11
+  num_atc: 1
+
+  num_input_pts: 2048
+  input_noise: 0.0
+  theta_range: [[-180, 0]]
+
+training:
+  optim:
+    all:
+      lr: 0.0001
+      decay_schedule: 200
+      decay_factor: 0.5
+      lr_min: 0.00000001
+  loss_axis: false
+  refinement_point_n: 100
+  dcd_threshold: 1
+  dcd_alpha: 50
+  total_epoch: 1
+  batch_size: 48
+  initialize_network_file: ["log/cadex_pm_laptop_pcl_rng/checkpoint/501_latest.pt"]
+  initialize_network_name: ["all"]
+  ablation: False
+
+evaluation:
+  eval_every_epoch: 1
+  batch_size: 1
+
+logging:
+  log_dir: pm_test/laptop_pcl
+  loggers: ["image", "hist", "video", "xls"]
+  viz_training_batch_interval: 1 # 20
+  viz_nontrain_batch_interval: 10
+  viz_epoch_interval: 1
+  checkpoint_epoch: 1 #20
+  mesh_viz_interval: 1
+
+  model_select_metric: segmentation
+  model_select_larger: true
